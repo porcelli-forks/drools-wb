@@ -33,8 +33,8 @@ import org.guvnor.common.services.backend.config.SafeSessionInfo;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.backend.validation.GenericValidator;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.service.AuthenticationService;
 import org.kie.workbench.common.services.backend.service.KieService;
@@ -243,8 +243,8 @@ public class ScoreCardXLSServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate( final Path path,
-                                             final Path resource ) {
+    public List<BuildMessage> validate(final Path path,
+                                       final Path resource ) {
         try {
             return genericValidator.validate( path );
 

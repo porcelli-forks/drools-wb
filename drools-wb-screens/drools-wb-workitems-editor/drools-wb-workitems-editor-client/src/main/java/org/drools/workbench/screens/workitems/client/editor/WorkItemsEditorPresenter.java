@@ -27,8 +27,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.drools.workbench.screens.workitems.client.type.WorkItemsResourceType;
 import org.drools.workbench.screens.workitems.model.WorkItemsModelContent;
 import org.drools.workbench.screens.workitems.service.WorkItemsEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.widgets.client.popups.validation.ValidationPopup;
@@ -142,23 +142,15 @@ public class WorkItemsEditorPresenter
     }
 
     protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                workItemsService.call(new RemoteCallback<List<ValidationMessage>>() {
-                    @Override
-                    public void callback(final List<ValidationMessage> results) {
-                        if (results == null || results.isEmpty()) {
-                            notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
-                                                                    NotificationEvent.NotificationType.SUCCESS));
-                        } else {
-                            validationPopup.showMessages(results);
-                        }
-                    }
-                }).validate(versionRecordManager.getCurrentPath(),
-                            view.getContent());
+        return () -> workItemsService.call((RemoteCallback<List<BuildMessage>>) results -> {
+            if (results == null || results.isEmpty()) {
+                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
+                                                        NotificationEvent.NotificationType.SUCCESS));
+            } else {
+                validationPopup.showMessages(results);
             }
-        };
+        }).validate(versionRecordManager.getCurrentPath(),
+                    view.getContent());
     }
 
     @Override

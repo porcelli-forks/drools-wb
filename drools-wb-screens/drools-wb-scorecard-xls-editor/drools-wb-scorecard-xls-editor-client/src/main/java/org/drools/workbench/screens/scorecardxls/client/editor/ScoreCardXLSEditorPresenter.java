@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.drools.workbench.screens.scorecardxls.client.type.ScoreCardXLSResourceType;
 import org.drools.workbench.screens.scorecardxls.service.ScoreCardXLSContent;
 import org.drools.workbench.screens.scorecardxls.service.ScoreCardXLSService;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.widgets.client.popups.validation.ValidationPopup;
@@ -47,7 +47,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
-@WorkbenchEditor(identifier = "ScoreCardXLSEditor", supportedTypes = { ScoreCardXLSResourceType.class })
+@WorkbenchEditor(identifier = "ScoreCardXLSEditor", supportedTypes = {ScoreCardXLSResourceType.class})
 public class ScoreCardXLSEditorPresenter
         extends KieEditor<ScoreCardXLSContent>
         implements ScoreCardXLSEditorView.Presenter {
@@ -70,34 +70,34 @@ public class ScoreCardXLSEditorPresenter
     private ScoreCardXLSEditorView view;
 
     @Inject
-    public ScoreCardXLSEditorPresenter( final ScoreCardXLSEditorView baseView ) {
-        super( baseView );
+    public ScoreCardXLSEditorPresenter(final ScoreCardXLSEditorView baseView) {
+        super(baseView);
         view = baseView;
     }
 
     @OnStartup
-    public void onStartup( final ObservablePath path,
-                           final PlaceRequest place ) {
-        super.init( path,
-                    place,
-                    type );
-        view.init( this );
+    public void onStartup(final ObservablePath path,
+                          final PlaceRequest place) {
+        super.init(path,
+                   place,
+                   type);
+        view.init(this);
     }
 
     @Override
     protected void loadContent() {
-        scoreCardXLSService.call( getModelSuccessCallback(),
-                                  getNoSuchFileExceptionErrorCallback() ).loadContent( versionRecordManager.getCurrentPath() );
+        scoreCardXLSService.call(getModelSuccessCallback(),
+                                 getNoSuchFileExceptionErrorCallback()).loadContent(versionRecordManager.getCurrentPath());
     }
 
     private RemoteCallback<ScoreCardXLSContent> getModelSuccessCallback() {
         return new RemoteCallback<ScoreCardXLSContent>() {
             @Override
-            public void callback( ScoreCardXLSContent content ) {
-                resetEditorPages( content.getOverview() );
+            public void callback(ScoreCardXLSContent content) {
+                resetEditorPages(content.getOverview());
 
-                view.setPath( versionRecordManager.getCurrentPath() );
-                view.setReadOnly( isReadOnly );
+                view.setPath(versionRecordManager.getCurrentPath());
+                view.setReadOnly(isReadOnly);
             }
         };
     }
@@ -107,18 +107,15 @@ public class ScoreCardXLSEditorPresenter
         return new Command() {
             @Override
             public void execute() {
-                scoreCardXLSService.call( new RemoteCallback<List<ValidationMessage>>() {
-                    @Override
-                    public void callback( final List<ValidationMessage> results ) {
-                        if ( results == null || results.isEmpty() ) {
-                            notification.fire( new NotificationEvent( CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
-                                                                      NotificationEvent.NotificationType.SUCCESS ) );
-                        } else {
-                            validationPopup.showMessages( results );
-                        }
+                scoreCardXLSService.call((RemoteCallback<List<BuildMessage>>) results -> {
+                    if (results == null || results.isEmpty()) {
+                        notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
+                                                                NotificationEvent.NotificationType.SUCCESS));
+                    } else {
+                        validationPopup.showMessages(results);
                     }
-                } ).validate( versionRecordManager.getCurrentPath(),
-                              versionRecordManager.getCurrentPath() );
+                }).validate(versionRecordManager.getCurrentPath(),
+                            versionRecordManager.getCurrentPath());
             }
         };
     }
@@ -147,5 +144,4 @@ public class ScoreCardXLSEditorPresenter
     public Menus getMenus() {
         return menus;
     }
-
 }

@@ -30,9 +30,9 @@ import org.drools.workbench.screens.guided.dtable.client.widget.table.GuidedDeci
 import org.drools.workbench.screens.guided.dtable.client.widget.table.events.cdi.DecisionTableSelectedEvent;
 import org.drools.workbench.screens.guided.dtable.model.GuidedDecisionTableEditorContent;
 import org.guvnor.common.services.project.categories.Decision;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.soup.project.datamodel.imports.Imports;
@@ -482,8 +482,8 @@ public class BaseGuidedDecisionTableEditorPresenterTest extends BaseGuidedDecisi
                                                                                 path,
                                                                                 placeRequest,
                                                                                 content);
-        final List<ValidationMessage> validationMessages = new ArrayList<ValidationMessage>() {{
-            add(new ValidationMessage());
+        final List<BuildMessage> validationMessages = new ArrayList<BuildMessage>() {{
+            add(new BuildMessage());
         }};
 
         when(dtService.validate(any(Path.class),

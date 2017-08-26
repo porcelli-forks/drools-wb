@@ -33,8 +33,8 @@ import org.drools.workbench.screens.guided.rule.client.type.GuidedRuleDRLResourc
 import org.drools.workbench.screens.guided.rule.client.type.GuidedRuleDSLRResourceType;
 import org.drools.workbench.screens.guided.rule.model.GuidedEditorContent;
 import org.drools.workbench.screens.guided.rule.service.GuidedRuleEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -209,23 +209,15 @@ public class GuidedRuleEditorPresenter
     }
 
     protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                getService().call(new RemoteCallback<List<ValidationMessage>>() {
-                    @Override
-                    public void callback(final List<ValidationMessage> results) {
-                        if (results == null || results.isEmpty()) {
-                            notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
-                                                                    NotificationEvent.NotificationType.SUCCESS));
-                        } else {
-                            validationPopup.showMessages(results);
-                        }
-                    }
-                }).validate(versionRecordManager.getCurrentPath(),
-                            view.getContent());
+        return () -> getService().call((RemoteCallback<List<BuildMessage>>) results -> {
+            if (results == null || results.isEmpty()) {
+                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
+                                                        NotificationEvent.NotificationType.SUCCESS));
+            } else {
+                validationPopup.showMessages(results);
             }
-        };
+        }).validate(versionRecordManager.getCurrentPath(),
+                        view.getContent());
     }
 
     protected void save() {
@@ -234,12 +226,9 @@ public class GuidedRuleEditorPresenter
 
         if (validator.isValid()) {
             savePopUpPresenter.show(versionRecordManager.getPathToLatest(),
-                                    new ParameterizedCommand<String>() {
-                                        @Override
-                                        public void execute(final String commitMessage) {
-                                            view.showSaving();
-                                            save(commitMessage);
-                                        }
+                                    commitMessage -> {
+                                        view.showSaving();
+                                        save(commitMessage);
                                     });
 
             concurrentUpdateSessionInfo = null;

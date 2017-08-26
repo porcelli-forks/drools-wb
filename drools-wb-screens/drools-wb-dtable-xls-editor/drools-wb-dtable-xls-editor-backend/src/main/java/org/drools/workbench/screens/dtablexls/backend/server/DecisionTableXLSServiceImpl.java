@@ -44,8 +44,8 @@ import org.guvnor.common.services.backend.config.SafeSessionInfo;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.backend.validation.GenericValidator;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.service.AuthenticationService;
 import org.kie.workbench.common.services.backend.service.KieService;
@@ -72,7 +72,7 @@ public class DecisionTableXLSServiceImpl
         implements DecisionTableXLSService,
                    ExtendedDecisionTableXLSService {
 
-    private static final Logger log = LoggerFactory.getLogger( DecisionTableXLSServiceImpl.class );
+    private static final Logger log = LoggerFactory.getLogger(DecisionTableXLSServiceImpl.class);
 
     private IOService ioService;
     private CopyService copyService;
@@ -88,15 +88,15 @@ public class DecisionTableXLSServiceImpl
     }
 
     @Inject
-    public DecisionTableXLSServiceImpl( @Named("ioStrategy") final IOService ioService,
-                                        final CopyService copyService,
-                                        final DeleteService deleteService,
-                                        final RenameService renameService,
-                                        final Event<ResourceOpenedEvent> resourceOpenedEvent,
-                                        final DecisionTableXLSConversionService conversionService,
-                                        final GenericValidator genericValidator,
-                                        final CommentedOptionFactory commentedOptionFactory,
-                                        final AuthenticationService authenticationService ) {
+    public DecisionTableXLSServiceImpl(@Named("ioStrategy") final IOService ioService,
+                                       final CopyService copyService,
+                                       final DeleteService deleteService,
+                                       final RenameService renameService,
+                                       final Event<ResourceOpenedEvent> resourceOpenedEvent,
+                                       final DecisionTableXLSConversionService conversionService,
+                                       final GenericValidator genericValidator,
+                                       final CommentedOptionFactory commentedOptionFactory,
+                                       final AuthenticationService authenticationService) {
         this.ioService = ioService;
         this.copyService = copyService;
         this.deleteService = deleteService;
@@ -109,259 +109,256 @@ public class DecisionTableXLSServiceImpl
     }
 
     @Override
-    public DecisionTableXLSContent loadContent( final Path path ) {
-        return super.loadContent( path );
+    public DecisionTableXLSContent loadContent(final Path path) {
+        return super.loadContent(path);
     }
 
     @Override
-    protected DecisionTableXLSContent constructContent( Path path,
-                                                        Overview overview ) {
+    protected DecisionTableXLSContent constructContent(Path path,
+                                                       Overview overview) {
         final DecisionTableXLSContent content = new DecisionTableXLSContent();
-        content.setOverview( overview );
+        content.setOverview(overview);
         return content;
     }
 
     @Override
-    public InputStream load( final Path path,
-                             final String sessionId ) {
+    public InputStream load(final Path path,
+                            final String sessionId) {
         try {
-            final InputStream inputStream = ioService.newInputStream( Paths.convert( path ),
-                                                                      StandardOpenOption.READ );
+            final InputStream inputStream = ioService.newInputStream(Paths.convert(path),
+                                                                     StandardOpenOption.READ);
 
             //Signal opening to interested parties
-            resourceOpenedEvent.fire( new ResourceOpenedEvent( path,
-                                                               getSessionInfo( sessionId ) ) );
+            resourceOpenedEvent.fire(new ResourceOpenedEvent(path,
+                                                             getSessionInfo(sessionId)));
 
             return inputStream;
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
     @Override
-    public Path create( final Path resource,
-                        final InputStream content,
-                        final String sessionId,
-                        final String comment ) {
-        return writeToFile( resource,
-                            content,
-                            sessionId,
-                            comment,
-                            true );
+    public Path create(final Path resource,
+                       final InputStream content,
+                       final String sessionId,
+                       final String comment) {
+        return writeToFile(resource,
+                           content,
+                           sessionId,
+                           comment,
+                           true);
     }
 
     @Override
-    public Path save( final Path resource,
-                      final InputStream content,
-                      final String sessionId,
-                      final String comment ) {
-        return writeToFile( resource,
-                            content,
-                            sessionId,
-                            comment,
-                            false );
+    public Path save(final Path resource,
+                     final InputStream content,
+                     final String sessionId,
+                     final String comment) {
+        return writeToFile(resource,
+                           content,
+                           sessionId,
+                           comment,
+                           false);
     }
 
-    private Path writeToFile( final Path resource,
-                              final InputStream content,
-                              final String sessionId,
-                              final String comment,
-                              boolean create ) {
-        final SessionInfo sessionInfo = getSessionInfo( sessionId );
+    private Path writeToFile(final Path resource,
+                             final InputStream content,
+                             final String sessionId,
+                             final String comment,
+                             boolean create) {
+        final SessionInfo sessionInfo = getSessionInfo(sessionId);
         String userAction = "UPDATING";
-        if ( create ) {
+        if (create) {
             userAction = "CREATING";
         }
-        log.info( "USER:" + sessionInfo.getIdentity().getIdentifier() + " " + userAction + " asset [" + resource.getFileName() + "]" );
+        log.info("USER:" + sessionInfo.getIdentity().getIdentifier() + " " + userAction + " asset [" + resource.getFileName() + "]");
 
         FileInputStream tempFIS = null;
         FileOutputStream tempFOS = null;
         OutputStream outputStream = null;
         try {
-            File tempFile = File.createTempFile( "testxls", null );
-            tempFOS = new FileOutputStream( tempFile );
-            IOUtils.copy( content, tempFOS );
+            File tempFile = File.createTempFile("testxls", null);
+            tempFOS = new FileOutputStream(tempFile);
+            IOUtils.copy(content, tempFOS);
             tempFOS.flush();
 
             //Validate the xls
-            validate( tempFile );
+            validate(tempFile);
 
-            final org.uberfire.java.nio.file.Path nioPath = Paths.convert( resource );
-            if ( create ) {
-                ioService.createFile( nioPath );
+            final org.uberfire.java.nio.file.Path nioPath = Paths.convert(resource);
+            if (create) {
+                ioService.createFile(nioPath);
             }
-            outputStream = ioService.newOutputStream( nioPath,
-                                                      commentedOptionFactory.makeCommentedOption( comment,
-                                                                                                  sessionInfo.getIdentity(),
-                                                                                                  sessionInfo ) );
+            outputStream = ioService.newOutputStream(nioPath,
+                                                     commentedOptionFactory.makeCommentedOption(comment,
+                                                                                                sessionInfo.getIdentity(),
+                                                                                                sessionInfo));
 
             //InputStream 'content' has been fully read to write to the temp file; so we need to use a new InputStream
             //An alternative is to check for content.markSupported() and reset() however since we have a temporary
             //file we may as well use it!
-            tempFIS = new FileInputStream( tempFile );
-            IOUtils.copy( tempFIS,
-                          outputStream );
+            tempFIS = new FileInputStream(tempFile);
+            IOUtils.copy(tempFIS,
+                         outputStream);
             outputStream.flush();
 
             //Read Path to ensure attributes have been set
-            final Path newPath = Paths.convert( nioPath );
+            final Path newPath = Paths.convert(nioPath);
 
             return newPath;
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         } finally {
             try {
                 content.close();
-            } catch ( IOException e ) {
-                throw ExceptionUtilities.handleException( e );
+            } catch (IOException e) {
+                throw ExceptionUtilities.handleException(e);
             }
-            if ( tempFIS != null ) {
+            if (tempFIS != null) {
                 try {
                     tempFIS.close();
-                } catch ( IOException e ) {
-                    throw ExceptionUtilities.handleException( e );
+                } catch (IOException e) {
+                    throw ExceptionUtilities.handleException(e);
                 }
             }
-            if ( tempFOS != null ) {
+            if (tempFOS != null) {
                 try {
                     tempFOS.close();
-                } catch ( IOException e ) {
-                    throw ExceptionUtilities.handleException( e );
+                } catch (IOException e) {
+                    throw ExceptionUtilities.handleException(e);
                 }
             }
-            if ( outputStream != null ) {
+            if (outputStream != null) {
                 try {
                     outputStream.close();
-                } catch ( IOException e ) {
-                    throw ExceptionUtilities.handleException( e );
+                } catch (IOException e) {
+                    throw ExceptionUtilities.handleException(e);
                 }
             }
         }
     }
 
-    void validate( final File tempFile ) {
+    void validate(final File tempFile) {
         Workbook workbook = null;
         try {
-            workbook = WorkbookFactory.create( tempFile );
-        } catch ( InvalidFormatException e ) {
-            throw new DecisionTableParseException( "DecisionTableParseException: An error occurred opening the workbook. It is possible that the encoding of the document did not match the encoding of the reader.",
-                                                   e );
-        } catch ( IOException e ) {
-            throw new DecisionTableParseException( "DecisionTableParseException: Failed to open Excel stream, " + "please check that the content is xls97 format.",
-                                                   e );
-        } catch ( Throwable e ) {
-            throw new DecisionTableParseException( "DecisionTableParseException: " + e.getMessage(),
-                                                   e );
+            workbook = WorkbookFactory.create(tempFile);
+        } catch (InvalidFormatException e) {
+            throw new DecisionTableParseException("DecisionTableParseException: An error occurred opening the workbook. It is possible that the encoding of the document did not match the encoding of the reader.",
+                                                  e);
+        } catch (IOException e) {
+            throw new DecisionTableParseException("DecisionTableParseException: Failed to open Excel stream, " + "please check that the content is xls97 format.",
+                                                  e);
+        } catch (Throwable e) {
+            throw new DecisionTableParseException("DecisionTableParseException: " + e.getMessage(),
+                                                  e);
         } finally {
-            if ( workbook != null ) {
+            if (workbook != null) {
                 try {
                     workbook.close();
-                } catch ( IOException e ) {
-                    throw ExceptionUtilities.handleException( e );
+                } catch (IOException e) {
+                    throw ExceptionUtilities.handleException(e);
                 }
             }
         }
     }
 
     @Override
-    public String getSource( final Path path ) {
+    public String getSource(final Path path) {
         InputStream inputStream = null;
         try {
             final SpreadsheetCompiler compiler = new SpreadsheetCompiler();
-            inputStream = ioService.newInputStream( Paths.convert( path ),
-                                                    StandardOpenOption.READ );
-            final String drl = compiler.compile( inputStream,
-                                                 InputType.XLS );
+            inputStream = ioService.newInputStream(Paths.convert(path),
+                                                   StandardOpenOption.READ);
+            final String drl = compiler.compile(inputStream,
+                                                InputType.XLS);
             return drl;
-        } catch ( Exception e ) {
-            throw new SourceGenerationFailedException( e.getMessage() );
+        } catch (Exception e) {
+            throw new SourceGenerationFailedException(e.getMessage());
         } finally {
-            if ( inputStream != null ) {
+            if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch ( IOException ioe ) {
-                    throw ExceptionUtilities.handleException( ioe );
+                } catch (IOException ioe) {
+                    throw ExceptionUtilities.handleException(ioe);
                 }
             }
         }
     }
 
     @Override
-    public void delete( final Path path,
-                        final String comment ) {
+    public void delete(final Path path,
+                       final String comment) {
         try {
-            deleteService.delete( path,
-                                  comment );
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            deleteService.delete(path,
+                                 comment);
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
     @Override
-    public Path rename( final Path path,
-                        final String newName,
-                        final String comment ) {
+    public Path rename(final Path path,
+                       final String newName,
+                       final String comment) {
         try {
-            return renameService.rename( path,
-                                         newName,
-                                         comment );
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            return renameService.rename(path,
+                                        newName,
+                                        comment);
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
     @Override
-    public Path copy( final Path path,
-                      final String newName,
-                      final String comment ) {
+    public Path copy(final Path path,
+                     final String newName,
+                     final String comment) {
         try {
-            return copyService.copy( path,
-                                     newName,
-                                     comment );
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            return copyService.copy(path,
+                                    newName,
+                                    comment);
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
     @Override
-    public Path copy( final Path path,
-                      final String newName,
-                      final Path targetDirectory,
-                      final String comment ) {
+    public Path copy(final Path path,
+                     final String newName,
+                     final Path targetDirectory,
+                     final String comment) {
         try {
-            return copyService.copy( path,
-                                     newName,
-                                     targetDirectory,
-                                     comment );
-
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            return copyService.copy(path,
+                                    newName,
+                                    targetDirectory,
+                                    comment);
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
     @Override
-    public ConversionResult convert( final Path path ) {
+    public ConversionResult convert(final Path path) {
         try {
-            return conversionService.convert( path );
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            return conversionService.convert(path);
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
     @Override
-    public List<ValidationMessage> validate( final Path path,
-                                             final Path resource ) {
+    public List<BuildMessage> validate(final Path path,
+                                       final Path resource) {
         try {
-            return genericValidator.validate( path );
-
-        } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            return genericValidator.validate(path);
+        } catch (Exception e) {
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
-    private SessionInfo getSessionInfo( final String sessionId ) {
-        return new SafeSessionInfo( new SessionInfoImpl( sessionId,
-                                                         authenticationService.getUser() ) );
+    private SessionInfo getSessionInfo(final String sessionId) {
+        return new SafeSessionInfo(new SessionInfoImpl(sessionId,
+                                                       authenticationService.getUser()));
     }
-
 }

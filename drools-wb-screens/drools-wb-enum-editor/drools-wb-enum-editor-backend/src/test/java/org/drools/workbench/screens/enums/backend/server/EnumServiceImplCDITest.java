@@ -24,6 +24,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.assertj.core.api.Assertions;
 import org.drools.workbench.screens.enums.service.EnumService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.test.CDITestSetup;
 import org.junit.After;
@@ -53,7 +54,7 @@ public class EnumServiceImplCDITest extends CDITestSetup {
     public void testValidate() throws Exception {
         final Path path = getPath("enums/src/main/resources/guvnor/feature/enums/personAge.enumeration");
 
-        final List<ValidationMessage> validationMessages = enumService.validate(path);
+        final List<BuildMessage> validationMessages = enumService.validate(path);
 
         Assertions.assertThat(validationMessages).isEmpty();
     }
@@ -62,7 +63,7 @@ public class EnumServiceImplCDITest extends CDITestSetup {
     public void testValidateWrongSyntax() throws Exception {
         final Path path = getPath("enums/src/main/resources/guvnor/feature/enums/personAgeWrongSyntax.enumeration");
 
-        final List<ValidationMessage> validationMessages = enumService.validate(path);
+        final List<BuildMessage> validationMessages = enumService.validate(path);
 
         Assertions.assertThat(validationMessages).hasSize(3);
         Assertions.assertThat(validationMessages.stream()

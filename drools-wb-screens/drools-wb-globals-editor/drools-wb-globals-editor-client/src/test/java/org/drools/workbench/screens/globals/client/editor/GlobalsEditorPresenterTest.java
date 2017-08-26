@@ -28,9 +28,9 @@ import org.drools.workbench.screens.globals.service.GlobalsEditorService;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.client.console.widget.button.AlertsButtonMenuItemBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -195,7 +195,7 @@ public class GlobalsEditorPresenterTest {
     @Test
     public void saveValidationErrors() {
         when(validationService.validateForSave(any(Path.class),
-                                               any(GlobalsModel.class))).thenReturn(Arrays.asList(new ValidationMessage()));
+                                               any(GlobalsModel.class))).thenReturn(Arrays.asList(new BuildMessage()));
 
         presenter.save();
 
@@ -205,7 +205,7 @@ public class GlobalsEditorPresenterTest {
         verify(validationPopup,
                times(1)).showSaveValidationMessages(any(Command.class),
                                                     any(Command.class),
-                                                    anyListOf(ValidationMessage.class));
+                                                    anyListOf(BuildMessage.class));
     }
 
     @Test
@@ -223,7 +223,7 @@ public class GlobalsEditorPresenterTest {
 
     @Test
     public void deleteValidationErrors() {
-        when(validationService.validateForDelete(any(Path.class))).thenReturn(Arrays.asList(new ValidationMessage()));
+        when(validationService.validateForDelete(any(Path.class))).thenReturn(Arrays.asList(new BuildMessage()));
 
         presenter.onDelete();
 
@@ -232,7 +232,7 @@ public class GlobalsEditorPresenterTest {
         verify(validationPopup,
                times(1)).showDeleteValidationMessages(any(Command.class),
                                                       any(Command.class),
-                                                      anyListOf(ValidationMessage.class));
+                                                      anyListOf(BuildMessage.class));
     }
 
     @Test

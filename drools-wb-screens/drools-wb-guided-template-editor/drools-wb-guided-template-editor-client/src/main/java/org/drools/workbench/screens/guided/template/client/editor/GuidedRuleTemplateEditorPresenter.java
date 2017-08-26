@@ -32,8 +32,8 @@ import org.drools.workbench.screens.guided.template.client.resources.i18n.Guided
 import org.drools.workbench.screens.guided.template.client.type.GuidedRuleTemplateResourceType;
 import org.drools.workbench.screens.guided.template.model.GuidedTemplateEditorContent;
 import org.drools.workbench.screens.guided.template.service.GuidedRuleTemplateEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleBaselinePayload;
@@ -197,23 +197,15 @@ public class GuidedRuleTemplateEditorPresenter
     }
 
     protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                getService().call(new RemoteCallback<List<ValidationMessage>>() {
-                    @Override
-                    public void callback(final List<ValidationMessage> results) {
-                        if (results == null || results.isEmpty()) {
-                            notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
-                                                                    NotificationEvent.NotificationType.SUCCESS));
-                        } else {
-                            validationPopup.showMessages(results);
-                        }
-                    }
-                }).validate(versionRecordManager.getCurrentPath(),
-                            view.getContent());
+        return () -> getService().call((RemoteCallback<List<BuildMessage>>) results -> {
+            if (results == null || results.isEmpty()) {
+                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
+                                                        NotificationEvent.NotificationType.SUCCESS));
+            } else {
+                validationPopup.showMessages(results);
             }
-        };
+        }).validate(versionRecordManager.getCurrentPath(),
+                    view.getContent());
     }
 
     @Override

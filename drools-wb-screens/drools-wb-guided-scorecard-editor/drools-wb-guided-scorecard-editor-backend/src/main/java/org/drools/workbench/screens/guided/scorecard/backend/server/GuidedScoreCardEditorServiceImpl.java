@@ -35,10 +35,10 @@ import org.guvnor.common.services.backend.config.SafeSessionInfo;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.backend.service.KieService;
@@ -244,7 +244,7 @@ public class GuidedScoreCardEditorServiceImpl
     public String toSource(final Path path,
                            final ScoreCardModel model) {
         try {
-            final List<ValidationMessage> results = doValidation(model);
+            final List<BuildMessage> results = doValidation(model);
             if (results.isEmpty()) {
                 return toDRL(path,
                              model);
@@ -260,17 +260,17 @@ public class GuidedScoreCardEditorServiceImpl
         return sourceServices.getServiceFor(Paths.convert(path)).getSource(Paths.convert(path), model);
     }
 
-    private String toValidationErrors(final List<ValidationMessage> results) {
+    private String toValidationErrors(final List<BuildMessage> results) {
         final StringBuilder drl = new StringBuilder();
-        for (final ValidationMessage msg : results) {
+        for (final BuildMessage msg : results) {
             drl.append("//").append(msg.getText()).append("\n");
         }
         return drl.toString();
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path,
-                                            final ScoreCardModel content) {
+    public List<BuildMessage> validate(final Path path,
+                                       final ScoreCardModel content) {
         try {
             return doValidation(content);
         } catch (Exception e) {
@@ -278,8 +278,8 @@ public class GuidedScoreCardEditorServiceImpl
         }
     }
 
-    private List<ValidationMessage> doValidation(final ScoreCardModel model) {
-        final List<ValidationMessage> results = new ArrayList<ValidationMessage>();
+    private List<BuildMessage> doValidation(final ScoreCardModel model) {
+        final List<BuildMessage> results = new ArrayList<>();
         if (isBlank(model.getFactName())) {
             results.add(makeValidationMessages("Fact Name is empty."));
         }
@@ -343,8 +343,8 @@ public class GuidedScoreCardEditorServiceImpl
         return (str == null || str.isEmpty() || str.trim().isEmpty());
     }
 
-    private ValidationMessage makeValidationMessages(final String message) {
-        final ValidationMessage msg = new ValidationMessage();
+    private BuildMessage makeValidationMessages(final String message) {
+        final BuildMessage msg = new BuildMessage();
         msg.setText(message);
         msg.setLevel(Level.ERROR);
         return msg;

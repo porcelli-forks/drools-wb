@@ -28,6 +28,7 @@ import org.drools.workbench.models.datamodel.rule.RuleModel;
 import org.drools.workbench.models.datamodel.rule.SingleFieldConstraint;
 import org.drools.workbench.screens.guided.rule.model.GuidedEditorContent;
 import org.drools.workbench.screens.guided.rule.service.GuidedRuleEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.test.CDITestSetup;
 import org.junit.After;
@@ -58,14 +59,14 @@ public class GuidedRuleEditorServiceImplCDITest extends CDITestSetup {
     @Test
     public void testValidateRuleThatInherit() throws Exception {
         final String resourcePath = RULES_ROOT + "sendElectionInvitation.rdrl";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).hasSize(0);
     }
 
     @Test
     public void testValidateRuleThatInheritNonExistingRule() throws Exception {
         final String resourcePath = RULES_ROOT + "sendElectionInvitationNonExisting.rdrl";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).isNotEmpty();
         messages.forEach(message -> Assertions.assertThat(message.getText()).contains(NON_EXISTING_PARENT));
     }
@@ -73,7 +74,7 @@ public class GuidedRuleEditorServiceImplCDITest extends CDITestSetup {
     @Test
     public void testValidateRuleAlphabeticallyComparesStrings() throws Exception {
         final String resourcePath = RULES_ROOT + "nameOrderingRule.rdrl";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).isEmpty();
     }
 
@@ -101,21 +102,21 @@ public class GuidedRuleEditorServiceImplCDITest extends CDITestSetup {
         Assertions.assertThat(fieldConstraintThree.getOperator()).isEqualTo("&& " + Operator.GREATER.getOperatorString());
         Assertions.assertThat(fieldConstraintThree.getValue()).isEqualTo("15");
 
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).isEmpty();
     }
 
     @Test
     public void testValidateTimeSpecificAttributes() throws Exception {
         final String resourcePath = RULES_ROOT + "timeSpecificAttributes.rdrl";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).isEmpty();
     }
 
     @Test
     public void testValidateTimeSpecificAttributesCron() throws Exception {
         final String resourcePath = RULES_ROOT + "timeSpecificAttributesCron.rdrl";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).isEmpty();
     }
 
@@ -123,12 +124,12 @@ public class GuidedRuleEditorServiceImplCDITest extends CDITestSetup {
     public void testValidateTimeSpecificAttributesInvalidTimer() throws Exception {
         final String resourcePath = RULES_ROOT + "timeSpecificAttributesInvalidTimer.rdrl";
         final String expectedError = "Incorrect number of arguments for interval timer 'x x x'";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).hasSize(2);
         Assertions.assertThat(messages).allMatch(m -> m.getText().contains(expectedError));
     }
 
-    private List<ValidationMessage> validateResource(final String resource) throws Exception {
+    private List<BuildMessage> validateResource(final String resource) throws Exception {
         final Path resourcePath = getPath(resource);
         return guidedRuleService.validate(resourcePath, guidedRuleService.load(resourcePath));
     }

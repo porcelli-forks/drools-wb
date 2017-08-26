@@ -34,11 +34,10 @@ import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.metadata.MetadataBuilder;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.backend.validation.GenericValidator;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCacheEvent;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.soup.project.datamodel.oracle.ModuleDataModelOracle;
 import org.kie.workbench.common.services.backend.service.KieService;
@@ -70,9 +69,6 @@ public class GlobalsEditorServiceImpl
 
     @Inject
     private RenameService renameService;
-
-    @Inject
-    private Event<InvalidateDMOPackageCacheEvent> invalidatePackageDMOEvent;
 
     @Inject
     private Event<ResourceOpenedEvent> resourceOpenedEvent;
@@ -212,9 +208,6 @@ public class GlobalsEditorServiceImpl
                                                             metadata),
                             commentedOptionFactory.makeCommentedOption(comment));
 
-            //Invalidate Package-level DMO cache as Globals have changed.
-            invalidatePackageDMOEvent.fire(new InvalidateDMOPackageCacheEvent(resource));
-
             fireMetadataSocialEvents(resource, currentMetadata, metadata);
             return resource;
         } catch (Exception e) {
@@ -282,8 +275,8 @@ public class GlobalsEditorServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path,
-                                            final GlobalsModel content) {
+    public List<BuildMessage> validate(final Path path,
+                                       final GlobalsModel content) {
         try {
             return genericValidator.validate(path,
                                              GlobalsPersistence.getInstance().marshal(content));

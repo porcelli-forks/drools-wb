@@ -18,11 +18,8 @@ package org.drools.workbench.screens.enums.backend.server;
 
 import java.util.Collections;
 
-import javax.enterprise.event.Event;
-
 import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCacheEvent;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,9 +53,6 @@ public class EnumServiceImplTest {
 
     @Mock
     private MetadataServerSideService metadataService;
-
-    @Mock
-    private Event<InvalidateDMOPackageCacheEvent> invalidateDMOPackageCache;
 
     @Mock
     private SaveAndRenameServiceImpl<String, Metadata> saveAndRenameService;

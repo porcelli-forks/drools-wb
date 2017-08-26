@@ -41,9 +41,9 @@ import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.backend.validation.GenericValidator;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
@@ -316,8 +316,8 @@ public class GuidedRuleEditorServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path,
-                                            final RuleModel content) {
+    public List<BuildMessage> validate(final Path path,
+                                       final RuleModel content) {
         try {
             final String source = toSourceUnexpanded(path,
                                                      content);

@@ -38,8 +38,8 @@ import org.drools.workbench.screens.guided.dtable.client.widget.table.events.cdi
 import org.drools.workbench.screens.guided.dtable.model.GuidedDecisionTableEditorContent;
 import org.drools.workbench.screens.guided.dtable.service.GuidedDecisionTableEditorService;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.client.console.widget.button.AlertsButtonMenuItemBuilder;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -419,9 +419,9 @@ public abstract class BaseGuidedDecisionTableEditorPresenter extends KieMultiple
         final ObservablePath path = dtPresenter.getCurrentPath();
         final GuidedDecisionTable52 model = dtPresenter.getModel();
 
-        service.call(new RemoteCallback<List<ValidationMessage>>() {
+        service.call(new RemoteCallback<List<BuildMessage>>() {
             @Override
-            public void callback(final List<ValidationMessage> results) {
+            public void callback(final List<BuildMessage> results) {
                 if (results == null || results.isEmpty()) {
                     notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
                                                             NotificationEvent.NotificationType.SUCCESS));
@@ -433,7 +433,7 @@ public abstract class BaseGuidedDecisionTableEditorPresenter extends KieMultiple
                     model);
     }
 
-    void showValidationPopup(final List<ValidationMessage> results) {
+    void showValidationPopup(final List<BuildMessage> results) {
         validationPopup.showMessages(results);
     }
 

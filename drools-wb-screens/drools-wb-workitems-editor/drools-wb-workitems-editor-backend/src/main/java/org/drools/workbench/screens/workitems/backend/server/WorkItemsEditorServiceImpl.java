@@ -46,10 +46,10 @@ import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.file.FileDiscoveryService;
 import org.guvnor.common.services.backend.file.FileExtensionsFilter;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.structure.server.config.ConfigGroup;
 import org.guvnor.structure.server.config.ConfigItem;
 import org.guvnor.structure.server.config.ConfigType;
@@ -318,7 +318,7 @@ public class WorkItemsEditorServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path) {
+    public List<BuildMessage> validate(final Path path) {
         try {
             final String content = ioService.readAllString(Paths.convert(path));
             return validate(path,
@@ -329,21 +329,21 @@ public class WorkItemsEditorServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path,
+    public List<BuildMessage> validate(final Path path,
                                             final String content) {
         return doValidation(path,
                             content);
     }
 
-    private List<ValidationMessage> doValidation(final Path path,
+    private List<BuildMessage> doValidation(final Path path,
                                                  final String content) {
-        final List<ValidationMessage> validationMessages = new ArrayList<ValidationMessage>();
+        final List<BuildMessage> validationMessages = new ArrayList<>();
         final List<String> workItemDefinitions = new ArrayList<String>();
         workItemDefinitions.add(content);
         try {
             WorkDefinitionsParser.parse(workItemDefinitions);
         } catch (Exception e) {
-            final ValidationMessage msg = new ValidationMessage();
+            final BuildMessage msg = new BuildMessage();
             msg.setPath(path);
             msg.setLevel(Level.ERROR);
             msg.setText(e.getMessage());

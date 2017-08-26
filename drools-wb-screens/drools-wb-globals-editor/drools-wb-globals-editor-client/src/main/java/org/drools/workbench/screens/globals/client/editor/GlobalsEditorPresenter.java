@@ -27,8 +27,8 @@ import org.drools.workbench.screens.globals.client.type.GlobalResourceType;
 import org.drools.workbench.screens.globals.model.GlobalsEditorContent;
 import org.drools.workbench.screens.globals.model.GlobalsModel;
 import org.drools.workbench.screens.globals.service.GlobalsEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
@@ -158,9 +158,9 @@ public class GlobalsEditorPresenter
         return new Command() {
             @Override
             public void execute() {
-                globalsEditorService.call(new RemoteCallback<List<ValidationMessage>>() {
+                globalsEditorService.call(new RemoteCallback<List<BuildMessage>>() {
                     @Override
-                    public void callback(final List<ValidationMessage> results) {
+                    public void callback(final List<BuildMessage> results) {
                         if (results == null || results.isEmpty()) {
                             notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
                                                                     NotificationEvent.NotificationType.SUCCESS));
@@ -177,13 +177,13 @@ public class GlobalsEditorPresenter
     @Override
     protected void save() {
         validationService.call((validationMessages) -> {
-            if (((List<ValidationMessage>) validationMessages).isEmpty()) {
+            if (((List<BuildMessage>) validationMessages).isEmpty()) {
                 showSavePopup();
             } else {
                 validationPopup.showSaveValidationMessages(() -> showSavePopup(),
                                                            () -> {
                                                            },
-                                                           (List<ValidationMessage>) validationMessages);
+                                                           (List<BuildMessage>) validationMessages);
             }
         }).validateForSave(versionRecordManager.getCurrentPath(),
                            model);
@@ -209,13 +209,13 @@ public class GlobalsEditorPresenter
 
     protected void onDelete() {
         validationService.call((validationMessages) -> {
-            if (((List<ValidationMessage>) validationMessages).isEmpty()) {
+            if (((List<BuildMessage>) validationMessages).isEmpty()) {
                 showDeletePopup(getVersionRecordManager().getCurrentPath());
             } else {
                 validationPopup.showDeleteValidationMessages(() -> showDeletePopup(versionRecordManager.getCurrentPath()),
                                                              () -> {
                                                              },
-                                                             (List<ValidationMessage>) validationMessages);
+                                                             (List<BuildMessage>) validationMessages);
             }
         }).validateForDelete(versionRecordManager.getCurrentPath());
     }

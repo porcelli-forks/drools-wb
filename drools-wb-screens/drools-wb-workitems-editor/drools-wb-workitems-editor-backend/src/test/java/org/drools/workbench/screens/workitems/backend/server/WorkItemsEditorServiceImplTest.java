@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -66,8 +66,8 @@ public class WorkItemsEditorServiceImplTest {
 
     @Test
     public void testMissingCustomDataType() throws Exception {
-        List<ValidationMessage> messages = service.validate(path,
-                                                            loadFile("missingCustomDataTypeDefinition.wid"));
+        List<BuildMessage> messages = service.validate(path,
+                                                       loadFile("missingCustomDataTypeDefinition.wid"));
         assertEquals(1,
                      messages.size());
         assertTrue("Expected error about missing import",

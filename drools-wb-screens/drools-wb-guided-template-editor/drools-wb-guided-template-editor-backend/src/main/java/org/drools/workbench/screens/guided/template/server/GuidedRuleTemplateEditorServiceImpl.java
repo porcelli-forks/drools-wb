@@ -38,10 +38,10 @@ import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.backend.validation.GenericValidator;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.backend.service.KieService;
@@ -280,7 +280,7 @@ public class GuidedRuleTemplateEditorServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path) {
+    public List<BuildMessage> validate(final Path path) {
         try {
             final String content = ioService.readAllString(Paths.convert(path));
             final TemplateModel model = RuleTemplateModelXMLPersistenceImpl.getInstance().unmarshal(content);
@@ -292,11 +292,11 @@ public class GuidedRuleTemplateEditorServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validate(final Path path,
-                                            final TemplateModel model) {
+    public List<BuildMessage> validate(final Path path,
+                                       final TemplateModel model) {
         try {
-            final List<ValidationMessage> messages = validateTemplateVariables(path,
-                                                                               model);
+            final List<BuildMessage> messages = validateTemplateVariables(path,
+                                                                          model);
             messages.addAll(genericValidator.validate(path,
                                                       RuleTemplateModelXMLPersistenceImpl.getInstance().marshal(model)));
             return messages;
@@ -305,9 +305,9 @@ public class GuidedRuleTemplateEditorServiceImpl
         }
     }
 
-    private List<ValidationMessage> validateTemplateVariables(final Path path,
-                                                              final TemplateModel model) {
-        final List<ValidationMessage> messages = new ArrayList<ValidationMessage>();
+    private List<BuildMessage> validateTemplateVariables(final Path path,
+                                                         final TemplateModel model) {
+        final List<BuildMessage> messages = new ArrayList<>();
         if (model.getInterpolationVariablesList().length > 0 && model.getRowsCount() == 0) {
             messages.add(makeValidationMessages(path,
                                                 "One or more Template Variables defined but no data has been entered."));
@@ -315,9 +315,9 @@ public class GuidedRuleTemplateEditorServiceImpl
         return messages;
     }
 
-    private ValidationMessage makeValidationMessages(final Path path,
-                                                     final String message) {
-        final ValidationMessage msg = new ValidationMessage();
+    private BuildMessage makeValidationMessages(final Path path,
+                                                final String message) {
+        final BuildMessage msg = new BuildMessage();
         msg.setPath(path);
         msg.setLevel(Level.WARNING);
         msg.setText(message);

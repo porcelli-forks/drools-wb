@@ -29,8 +29,8 @@ import org.drools.workbench.models.guided.scorecard.shared.ScoreCardModel;
 import org.drools.workbench.screens.guided.scorecard.client.type.GuidedScoreCardResourceType;
 import org.drools.workbench.screens.guided.scorecard.model.ScoreCardModelContent;
 import org.drools.workbench.screens.guided.scorecard.service.GuidedScoreCardEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleBaselinePayload;
@@ -167,9 +167,9 @@ public class GuidedScoreCardEditorPresenter
         return new Command() {
             @Override
             public void execute() {
-                scoreCardEditorService.call(new RemoteCallback<List<ValidationMessage>>() {
+                scoreCardEditorService.call(new RemoteCallback<List<BuildMessage>>() {
                     @Override
-                    public void callback(final List<ValidationMessage> results) {
+                    public void callback(final List<BuildMessage> results) {
                         if (results == null || results.isEmpty()) {
                             notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
                                                                     NotificationEvent.NotificationType.SUCCESS));

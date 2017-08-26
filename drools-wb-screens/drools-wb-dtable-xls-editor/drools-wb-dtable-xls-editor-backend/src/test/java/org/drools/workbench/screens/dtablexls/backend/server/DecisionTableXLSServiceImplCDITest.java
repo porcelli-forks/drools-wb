@@ -25,6 +25,7 @@ import org.assertj.core.api.SoftAssertions;
 import org.drools.workbench.models.guided.dtable.shared.conversion.ConversionMessage;
 import org.drools.workbench.models.guided.dtable.shared.conversion.ConversionResult;
 import org.drools.workbench.screens.dtablexls.service.DecisionTableXLSService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.test.CDITestSetup;
 import org.junit.After;
@@ -92,7 +93,7 @@ public class DecisionTableXLSServiceImplCDITest extends CDITestSetup {
     @Test
     public void testValidateFunctionAndBigDecimal() throws Exception {
         final String resourcePath = "dtables/src/main/resources/guvnor/feature/dtables/FunctionAndBigDecimalTable.xls";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).hasSize(0);
     }
 
@@ -115,14 +116,14 @@ public class DecisionTableXLSServiceImplCDITest extends CDITestSetup {
     @Test
     public void testValidateMultiplePatterns() throws Exception {
         final String resourcePath = "dtables/src/main/resources/guvnor/feature/dtables/SampleDTExt1.xls";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).hasSize(0);
     }
 
     @Test
     public void testValidateColumnsNotInStandardOrder() throws Exception {
         final String resourcePath = "dtables/src/main/resources/guvnor/feature/dtables/SampleDTExt2.xls";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).hasSize(0);
     }
 
@@ -133,7 +134,7 @@ public class DecisionTableXLSServiceImplCDITest extends CDITestSetup {
     @Ignore("Ignored due to RHDM-216")
     public void testFromAccumulate() throws Exception {
         final String resourcePath = "forest/src/main/resources/com/redhat/sample/ForestHealth.xls";
-        final List<ValidationMessage> messages = validateResource(resourcePath);
+        final List<BuildMessage> messages = validateResource(resourcePath);
         Assertions.assertThat(messages).hasSize(0);
     }
 
@@ -142,7 +143,7 @@ public class DecisionTableXLSServiceImplCDITest extends CDITestSetup {
         return xlsService.convert(resourcePath);
     }
 
-    private List<ValidationMessage> validateResource(final String resource) throws Exception {
+    private List<BuildMessage> validateResource(final String resource) throws Exception {
         final Path resourcePath = getPath(resource);
         return xlsService.validate(resourcePath, resourcePath);
     }

@@ -40,8 +40,8 @@ import org.drools.workbench.screens.guided.dtree.client.widget.popups.EditTypePo
 import org.drools.workbench.screens.guided.dtree.client.widget.popups.ParserMessagesPopup;
 import org.drools.workbench.screens.guided.dtree.model.GuidedDecisionTreeEditorContent;
 import org.drools.workbench.screens.guided.dtree.service.GuidedDecisionTreeEditorService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleBaselinePayload;
@@ -201,9 +201,9 @@ public class GuidedDecisionTreeEditorPresenter
         return new Command() {
             @Override
             public void execute() {
-                service.call( new RemoteCallback<List<ValidationMessage>>() {
+                service.call( new RemoteCallback<List<BuildMessage>>() {
                     @Override
-                    public void callback( final List<ValidationMessage> results ) {
+                    public void callback( final List<BuildMessage> results ) {
                         if ( results == null || results.isEmpty() ) {
                             notification.fire( new NotificationEvent( CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
                                                                       NotificationEvent.NotificationType.SUCCESS ) );

@@ -69,7 +69,7 @@
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-datamodel-api</artifactId>
+      <artifactId>kie-wb-common-services-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -139,7 +139,7 @@
     <!-- Test scope dependencies -->
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-datamodel-backend</artifactId>
+      <artifactId>kie-wb-common-services-backend</artifactId>
       <scope>test</scope>
       <exclusions>
         <exclusion>

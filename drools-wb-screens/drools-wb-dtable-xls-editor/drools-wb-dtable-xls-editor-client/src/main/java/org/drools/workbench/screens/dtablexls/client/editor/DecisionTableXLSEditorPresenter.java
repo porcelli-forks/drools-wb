@@ -34,7 +34,7 @@ import org.drools.workbench.screens.dtablexls.client.widgets.ConversionMessageWi
 import org.drools.workbench.screens.dtablexls.client.widgets.PopupListWidget;
 import org.drools.workbench.screens.dtablexls.service.DecisionTableXLSContent;
 import org.drools.workbench.screens.dtablexls.service.DecisionTableXLSService;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.jboss.errai.common.client.api.Caller;
@@ -202,23 +202,15 @@ public class DecisionTableXLSEditorPresenter
 
     @Override
     protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                decisionTableXLSService.call(new RemoteCallback<List<ValidationMessage>>() {
-                    @Override
-                    public void callback(final List<ValidationMessage> results) {
-                        if (results == null || results.isEmpty()) {
-                            notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
-                                                                    NotificationEvent.NotificationType.SUCCESS));
-                        } else {
-                            validationPopup.showMessages(results);
-                        }
-                    }
-                }).validate(versionRecordManager.getCurrentPath(),
-                            versionRecordManager.getCurrentPath());
+        return () -> decisionTableXLSService.call((RemoteCallback<List<BuildMessage>>) results -> {
+            if (results == null || results.isEmpty()) {
+                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
+                                                        NotificationEvent.NotificationType.SUCCESS));
+            } else {
+                validationPopup.showMessages(results);
             }
-        };
+        }).validate(versionRecordManager.getCurrentPath(),
+                        versionRecordManager.getCurrentPath());
     }
 
     @Override

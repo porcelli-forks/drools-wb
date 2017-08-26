@@ -41,7 +41,6 @@ public class EnumDropDownServiceTest {
                                                    final String[] valuePairs,
                                                    final String expression) {
                 return super.loadDropDownExpression(cl,
-                                                    new RawMVELEvaluator(),
                                                     valuePairs,
                                                     expression);
             }
@@ -72,7 +71,6 @@ public class EnumDropDownServiceTest {
                                                    final String[] valuePairs,
                                                    final String expression) {
                 return super.loadDropDownExpression(cl,
-                                                    new RawMVELEvaluator(),
                                                     valuePairs,
                                                     expression);
             }

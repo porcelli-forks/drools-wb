@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.drools.workbench.screens.guided.dtable.service.GuidedDecisionTableEditorService;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.test.CDITestSetup;
 import org.junit.After;
 import org.junit.Before;
@@ -51,7 +51,7 @@ public class GuidedDecisionTableEditorServiceImplCDITest extends CDITestSetup {
     @Test
     public void testFunctionFromDrl() throws Exception {
         final Path path = getPath("rhba370/src/main/resources/com/sample/dtissuesampleproject/UseFunctionFromDrl.gdst");
-        final List<ValidationMessage> validationMessages = testedService.validate(path, testedService.load(path));
+        final List<BuildMessage> validationMessages = testedService.validate(path, testedService.load(path));
         Assertions.assertThat(validationMessages).isEmpty();
     }
 
@@ -59,7 +59,7 @@ public class GuidedDecisionTableEditorServiceImplCDITest extends CDITestSetup {
     @Ignore("RHDM-329")
     public void testUndeclaredFunction() throws Exception {
         final Path path = getPath("rhba370/src/main/resources/com/sample/dtissuesampleproject/UseUndeclaredFunction.gdst");
-        final List<ValidationMessage> validationMessages = testedService.validate(path, testedService.load(path));
+        final List<BuildMessage> validationMessages = testedService.validate(path, testedService.load(path));
         Assertions.assertThat(validationMessages).hasSize(1);
         Assertions.assertThat(validationMessages)
                 .extracting("text", String.class)

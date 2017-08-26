@@ -25,7 +25,7 @@ import org.assertj.core.api.Assertions;
 import org.drools.workbench.models.guided.template.shared.TemplateModel;
 import org.drools.workbench.screens.guided.template.model.GuidedTemplateEditorContent;
 import org.drools.workbench.screens.guided.template.service.GuidedRuleTemplateEditorService;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.test.CDITestSetup;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -83,7 +83,7 @@ public class GuidedRuleTemplateEditorServiceImplCDITest extends CDITestSetup {
 
     @Test
     public void testValidate() throws Exception {
-        final List<ValidationMessage> messages = testedService.validate(getPath(CARS));
+        final List<BuildMessage> messages = testedService.validate(getPath(CARS));
 
         Assertions.assertThat(messages).isEmpty();
     }
@@ -92,8 +92,8 @@ public class GuidedRuleTemplateEditorServiceImplCDITest extends CDITestSetup {
     public void testValidateAndLoad() throws Exception {
         final Path testedPath = getPath(CARS);
         final TemplateModel testedModel = testedService.load(testedPath);
-        final List<ValidationMessage> messages = testedService.validate(testedPath,
-                                                                        testedModel);
+        final List<BuildMessage> messages = testedService.validate(testedPath,
+                                                                   testedModel);
 
         Assertions.assertThat(messages).isEmpty();
         Assertions.assertThat(testedModel.getColsCount()).isEqualTo(3);

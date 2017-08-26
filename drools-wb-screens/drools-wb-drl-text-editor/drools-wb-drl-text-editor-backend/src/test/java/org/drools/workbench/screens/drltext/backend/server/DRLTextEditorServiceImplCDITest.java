@@ -23,7 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.drools.workbench.screens.drltext.model.DrlModelContent;
 import org.drools.workbench.screens.drltext.service.DRLTextEditorService;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.test.CDITestSetup;
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class DRLTextEditorServiceImplCDITest extends CDITestSetup {
     private static final String CAR_DRIVING_LICENSE_IMPORT = CAR_DRIVING_ROOT + "addAdditionalStorage.drl";
     private static final String CAR_DRIVING_LICENSE_IMPORT_BROKEN = CAR_DRIVING_ROOT + "addAdditionalStorageBroken.drl";
 
-    private List<ValidationMessage> validationMessages;
+    private List<BuildMessage> validationMessages;
     private DRLTextEditorService drlService;
 
     @Before

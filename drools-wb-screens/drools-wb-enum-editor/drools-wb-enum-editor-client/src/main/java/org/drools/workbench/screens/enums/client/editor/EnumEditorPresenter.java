@@ -26,8 +26,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.drools.workbench.screens.enums.client.type.EnumResourceType;
 import org.drools.workbench.screens.enums.model.EnumModelContent;
 import org.drools.workbench.screens.enums.service.EnumService;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.widgets.client.popups.validation.ValidationPopup;
@@ -128,23 +128,15 @@ public class EnumEditorPresenter
     }
 
     protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                enumService.call(new RemoteCallback<List<ValidationMessage>>() {
-                    @Override
-                    public void callback(final List<ValidationMessage> results) {
-                        if (results == null || results.isEmpty()) {
-                            notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
-                                                                    NotificationEvent.NotificationType.SUCCESS));
-                        } else {
-                            validationPopup.showMessages(results);
-                        }
-                    }
-                }).validate(versionRecordManager.getCurrentPath(),
-                            EnumParser.toString(view.getContent()));
+        return () -> enumService.call((RemoteCallback<List<BuildMessage>>) results -> {
+            if (results == null || results.isEmpty()) {
+                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
+                                                        NotificationEvent.NotificationType.SUCCESS));
+            } else {
+                validationPopup.showMessages(results);
             }
-        };
+        }).validate(versionRecordManager.getCurrentPath(),
+                    EnumParser.toString(view.getContent()));
     }
 
     @Override
