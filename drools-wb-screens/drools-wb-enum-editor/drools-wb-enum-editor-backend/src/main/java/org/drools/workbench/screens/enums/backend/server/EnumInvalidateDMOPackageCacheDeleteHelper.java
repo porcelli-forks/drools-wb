@@ -25,7 +25,7 @@ import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCac
 import org.kie.workbench.common.services.backend.helpers.AbstractInvalidateDMOPackageCacheDeleteHelper;
 
 /**
- * DeleteHelper for Enumerations to invalidate LRUDataModelOracleCache entries when an Enumeration is deleted.
+ * DeleteHelper for Enumerations to isInvalidated LRUDataModelOracleCache entries when an Enumeration is deleted.
  */
 @ApplicationScoped
 public class EnumInvalidateDMOPackageCacheDeleteHelper extends AbstractInvalidateDMOPackageCacheDeleteHelper<EnumResourceTypeDefinition> {

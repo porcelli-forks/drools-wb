@@ -36,7 +36,7 @@ public class BuilderFactory {
                           final HeaderMetaData headerMetaData,
                           final AnalyzerConfiguration configuration) {
 
-        this.utils = PortablePreconditions.checkNotNull("utils",
+        this.utils = PortablePreconditions.checkNotNull("util",
                                                         utils);
         this.index = PortablePreconditions.checkNotNull("index",
                                                         index);

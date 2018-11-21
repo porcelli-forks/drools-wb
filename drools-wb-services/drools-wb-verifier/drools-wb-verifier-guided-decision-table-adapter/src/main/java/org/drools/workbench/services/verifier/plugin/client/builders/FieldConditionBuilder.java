@@ -47,7 +47,7 @@ public class FieldConditionBuilder {
                                                                  builderFactory);
         this.index = PortablePreconditions.checkNotNull("index",
                                                         index);
-        this.utils = PortablePreconditions.checkNotNull("utils",
+        this.utils = PortablePreconditions.checkNotNull("util",
                                                         utils);
         this.configuration = PortablePreconditions.checkNotNull("configuration",
                                                                 configuration);

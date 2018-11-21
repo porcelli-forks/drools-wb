@@ -21,9 +21,6 @@ import org.guvnor.common.services.shared.test.TestResultMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.backend.builder.service.BuildInfo;
-import org.kie.workbench.common.services.backend.builder.service.BuildInfoService;
-import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,7 +32,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScenarioRunnerImplServiceImplTest {
@@ -49,21 +45,12 @@ public class ScenarioRunnerImplServiceImplTest {
     @Mock
     private KieModuleService moduleService;
 
-    @Mock
-    private BuildInfoService buildInfoService;
-
-    @Mock
-    private BuildInfo buildInfo;
-
-    @Mock
-    private ModuleClassLoaderHelper classLoaderHelper;
-
     @InjectMocks
     private ScenarioRunnerServiceImpl scenarioRunnerService = new ScenarioRunnerServiceImpl();
 
     @Before
     public void setup() {
-        when(classLoaderHelper.getModuleClassLoader(any())).thenReturn(ClassLoader.getSystemClassLoader());
+        //when(classLoaderHelper.getModuleClassLoader(any())).thenReturn(ClassLoader.getSystemClassLoader());
     }
 
     @Test
@@ -75,7 +62,7 @@ public class ScenarioRunnerImplServiceImplTest {
 
     @Test
     public void runTest() throws Exception {
-        when(buildInfoService.getBuildInfo(any())).thenReturn(buildInfo);
+        //when(buildInfoService.getBuildInfo(any())).thenReturn(buildInfo);
         scenarioRunnerService.runTest("test", mock(Path.class), new ScenarioSimulationModel());
 
         verify(defaultTestResultMessageEvent).fire(any());

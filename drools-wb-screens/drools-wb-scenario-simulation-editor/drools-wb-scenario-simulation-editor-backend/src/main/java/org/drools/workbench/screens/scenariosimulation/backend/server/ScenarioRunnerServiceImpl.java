@@ -34,8 +34,7 @@ import org.guvnor.common.services.shared.test.TestResultMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.junit.runner.Result;
 import org.kie.api.runtime.KieContainer;
-import org.kie.workbench.common.services.backend.builder.service.BuildInfoService;
-import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.ModuleBuildInfo;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.uberfire.backend.vfs.Path;
@@ -47,19 +46,26 @@ import static org.drools.workbench.screens.scenariosimulation.backend.server.uti
 public class ScenarioRunnerServiceImpl
         implements ScenarioRunnerService {
 
-    @Inject
     private Event<TestResultMessage> defaultTestResultMessageEvent;
 
-    @Inject
     private KieModuleService moduleService;
 
-    @Inject
-    private BuildInfoService buildInfoService;
-
-    @Inject
-    private ModuleClassLoaderHelper classLoaderHelper;
+    private ModuleBuildInfo moduleBuildInfo;
 
     private BiFunction<KieContainer, Simulation, AbstractScenarioRunner> runnerSupplier = ScenarioRunnerImpl::new;
+
+    public ScenarioRunnerServiceImpl() {
+        //CDI Proxy
+    }
+
+    @Inject
+    public ScenarioRunnerServiceImpl(final Event<TestResultMessage> defaultTestResultMessageEvent,
+                                     final KieModuleService moduleService,
+                                     final ModuleBuildInfo moduleBuildInfo) {
+        this.defaultTestResultMessageEvent = defaultTestResultMessageEvent;
+        this.moduleService = moduleService;
+        this.moduleBuildInfo = moduleBuildInfo;
+    }
 
     @Override
     public void runAllTests(final String identifier,
@@ -92,7 +98,7 @@ public class ScenarioRunnerServiceImpl
                         final ScenarioSimulationModel model) {
 
         KieModule kieModule = getKieModule(path);
-        ClassLoader moduleClassLoader = classLoaderHelper.getModuleClassLoader(kieModule);
+        ClassLoader moduleClassLoader = moduleBuildInfo.getOrCreateEntry(kieModule).getClassLoader();
         KieContainer kieContainer = getKieContainer(kieModule);
         AbstractScenarioRunner scenarioRunner = getRunnerSupplier().apply(kieContainer, model.getSimulation());
 
@@ -117,7 +123,7 @@ public class ScenarioRunnerServiceImpl
     }
 
     protected KieContainer getKieContainer(KieModule kieModule) {
-        return buildInfoService.getBuildInfo(kieModule).getKieContainer();
+        return moduleBuildInfo.getOrCreateEntry(kieModule).getKieContainer().orElse(null);
     }
 
     public BiFunction<KieContainer, Simulation, AbstractScenarioRunner> getRunnerSupplier() {

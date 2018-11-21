@@ -25,7 +25,7 @@ import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCac
 import org.kie.workbench.common.services.backend.helpers.AbstractInvalidateDMOPackageCacheDeleteHelper;
 
 /**
- * DeleteHelper for Globals to invalidate LRUDataModelOracleCache entries when a Global is deleted.
+ * DeleteHelper for Globals to isInvalidated LRUDataModelOracleCache entries when a Global is deleted.
  */
 @ApplicationScoped
 public class GlobalsInvalidateDMOPackageCacheDeleteHelper extends AbstractInvalidateDMOPackageCacheDeleteHelper<GlobalResourceTypeDefinition> {

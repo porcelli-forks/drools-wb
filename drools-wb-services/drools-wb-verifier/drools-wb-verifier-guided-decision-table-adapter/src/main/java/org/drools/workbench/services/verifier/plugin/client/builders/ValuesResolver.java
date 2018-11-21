@@ -37,7 +37,7 @@ public class ValuesResolver {
                           final int columnIndex,
                           final ConditionCol52 conditionColumn,
                           final DTCellValue52 realCellValue) {
-        this.utils = PortablePreconditions.checkNotNull("utils",
+        this.utils = PortablePreconditions.checkNotNull("util",
                                                         utils);
         this.columnIndex = PortablePreconditions.checkNotNull("columnIndex",
                                                               columnIndex);
@@ -100,12 +100,12 @@ public class ValuesResolver {
     private String getType() throws
             ValueResolveException {
         try {
-            Logger.add("Getting type from utils");
+            Logger.add("Getting type from util");
 
             final String type = utils.getType(conditionColumn,
                                               columnIndex);
 
-            Logger.add("Resolver type from utils: " + type);
+            Logger.add("Resolver type from util: " + type);
 
             return type;
         } catch (final Exception e) {

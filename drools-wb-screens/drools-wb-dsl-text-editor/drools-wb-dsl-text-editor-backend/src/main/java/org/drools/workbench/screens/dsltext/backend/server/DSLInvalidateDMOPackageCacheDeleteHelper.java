@@ -25,7 +25,7 @@ import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCac
 import org.kie.workbench.common.services.backend.helpers.AbstractInvalidateDMOPackageCacheDeleteHelper;
 
 /**
- * DeleteHelper for DSLs to invalidate LRUDataModelOracleCache entries when a DSL is deleted.
+ * DeleteHelper for DSLs to isInvalidated LRUDataModelOracleCache entries when a DSL is deleted.
  */
 @ApplicationScoped
 public class DSLInvalidateDMOPackageCacheDeleteHelper extends AbstractInvalidateDMOPackageCacheDeleteHelper<DSLResourceTypeDefinition> {
